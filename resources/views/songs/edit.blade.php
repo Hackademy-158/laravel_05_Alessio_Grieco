@@ -6,16 +6,17 @@
             <div class="col-md-8">
                 <div class="card bg-dark text-white">
                     <div class="card-header">
-                        <h2 class="mb-0">Add New Song</h2>
+                        <h2 class="mb-0">Edit Song</h2>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('songs.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('songs.update', $song->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            @method('PUT')
                             
                             <div class="mb-3">
                                 <label for="title" class="form-label">Song Title *</label>
                                 <input type="text" class="form-control @error('title') is-invalid @enderror" 
-                                    id="title" name="title" value="{{ old('title') }}" required>
+                                    id="title" name="title" value="{{ old('title', $song->title) }}" required>
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -24,7 +25,7 @@
                             <div class="mb-3">
                                 <label for="artist" class="form-label">Artist *</label>
                                 <input type="text" class="form-control @error('artist') is-invalid @enderror" 
-                                    id="artist" name="artist" value="{{ old('artist') }}" required>
+                                    id="artist" name="artist" value="{{ old('artist'), $song->artist }}" required>
                                 @error('artist')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -33,7 +34,7 @@
                             <div class="mb-3">
                                 <label for="album" class="form-label">Album</label>
                                 <input type="text" class="form-control @error('album') is-invalid @enderror" 
-                                    id="album" name="album" value="{{ old('album') }}">
+                                    id="album" name="album" value="{{ old('album'), $song->album }}">
                                 @error('album')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -42,7 +43,7 @@
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
                                 <textarea class="form-control @error('description') is-invalid @enderror" 
-                                    id="description" name="description" rows="3">{{ old('description') }}</textarea>
+                                    id="description" name="description" rows="3">{{ old('description'), $song->description }}</textarea>
                                 @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -57,30 +58,6 @@
                                     <option value="Jazz" {{ old('genre') == 'Jazz' ? 'selected' : '' }}>Jazz</option>
                                     <option value="Classical" {{ old('genre') == 'Classical' ? 'selected' : '' }}>Classical</option>
                                     <option value="Hip Hop" {{ old('genre') == 'Hip Hop' ? 'selected' : '' }}>Hip Hop</option>
-                                    <option value="R&B" {{ old('genre') == 'R&B' ? 'selected' : '' }}>R&B</option>
-                                    <option value="Country" {{ old('genre') == 'Country' ? 'selected' : '' }}>Country</option>
-                                    <option value="Electronic" {{ old('genre') == 'Electronic' ? 'selected' : '' }}>Electronic</option>
-                                    <option value="Dance" {{ old('genre') == 'Dance' ? 'selected' : '' }}>Dance</option>
-                                    <option value="Metal" {{ old('genre') == 'Metal' ? 'selected' : '' }}>Metal</option>
-                                    <option value="Punk" {{ old('genre') == 'Punk' ? 'selected' : '' }}>Punk</option>
-                                    <option value="Folk" {{ old('genre') == 'Folk' ? 'selected' : '' }}>Folk</option>
-                                    <option value="Soul" {{ old('genre') == 'Soul' ? 'selected' : '' }}>Soul</option>
-                                    <option value="Blues" {{ old('genre') == 'Blues' ? 'selected' : '' }}>Blues</option>
-                                    <option value="Reggae" {{ old('genre') == 'Reggae' ? 'selected' : '' }}>Reggae</option>
-                                    <option value="Latin" {{ old('genre') == 'Latin' ? 'selected' : '' }}>Latin</option>
-                                    <option value="Gospel" {{ old('genre') == 'Gospel' ? 'selected' : '' }}>Gospel</option>
-                                    <option value="Indie" {{ old('genre') == 'Indie' ? 'selected' : '' }}>Indie</option>
-                                    <option value="Ska" {{ old('genre') == 'Ska' ? 'selected' : '' }}>Ska</option>
-                                    <option value="Metalcore" {{ old('genre') == 'Metalcore' ? 'selected' : '' }}>Metalcore</option>
-                                    <option value="Funk" {{ old('genre') == 'Funk' ? 'selected' : '' }}>Funk</option>
-                                    <option value="Trap" {{ old('genre') == 'Trap' ? 'selected' : '' }}>Trap</option>
-                                    <option value="EDM" {{ old('genre') == 'EDM' ? 'selected' : '' }}>EDM</option>
-                                    <option value="House" {{ old('genre') == 'House' ? 'selected' : '' }}>House</option>
-                                    <option value="Dancehall" {{ old('genre') == 'Dancehall' ? 'selected' : '' }}>Dancehall</option>
-                                    <option value="Dubstep" {{ old('genre') == 'Dubstep' ? 'selected' : '' }}>Dubstep</option>
-                                    <option value="Drum&Bass" {{ old('genre') == 'Drum&Bass' ? 'selected' : '' }}>Drum&Bass</option>
-                                    <option value="Techno" {{ old('genre') == 'Techno' ? 'selected' : '' }}>Techno</option>
-                                    <option value="Future Bass" {{ old('genre') == 'Future Bass' ? 'selected' : '' }}>Future Bass</option>
                                 </select>
                                 @error('genre')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -89,6 +66,11 @@
 
                             <div class="mb-3">
                                 <label for="image_path" class="form-label">Cover Image</label>
+                                @if($song->image_path)
+                                    <div class="mb-2">
+                                        <img src="{{ Storage::url($song->image_path) }}" alt="Current image" class="img-thumbnail" style="max-height: 200px;">
+                                    </div>
+                                @endif
                                 <input type="file" class="form-control @error('image_path') is-invalid @enderror" 
                                     id="image_path" name="image_path" accept="image/*">
                                 @error('image_path')
@@ -97,7 +79,7 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Add Song</button>
+                                <button type="submit" class="btn btn-primary">Modify Song</button>
                                 <a href="{{ route('songs.index') }}" class="btn btn-outline-secondary">Cancel</a>
                             </div>
                         </form>
